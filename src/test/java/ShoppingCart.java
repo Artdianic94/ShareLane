@@ -3,21 +3,20 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingCart {
-    @BeforeTest
+    WebDriver driver;
+
+    @BeforeMethod
     public void setProp() {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
-    }
-
-    @Test
-    public void addingTheBookToShoppingCartTest() throws InterruptedException {
-        WebDriver driver = new ChromeDriver();
+        driver = new ChromeDriver();
         //Open Zip code page
         driver.get("https://www.sharelane.com/cgi-bin/register.py");
         //Input 5 digits zip;
@@ -35,6 +34,10 @@ public class ShoppingCart {
         driver.findElement(By.name("email")).sendKeys(userEmail);
         driver.findElement(By.name("password")).sendKeys("1111");
         driver.findElement(By.xpath("//input[@type='submit' and @value='Login']")).click();
+    }
+
+    @Test
+    public void addingTheBookToShoppingCartTest() throws InterruptedException {
         Thread.sleep(3000);
         //Click on the name of the book
         driver.findElement(By.xpath("(//table[@align='center']//tbody//tr[@align='center']/td/a)[2]")).click();
@@ -44,29 +47,10 @@ public class ShoppingCart {
         String expectedSuccessMessage = "Book was added to the Shopping Cart";
         Assert.assertEquals(actualSuccessMessage, expectedSuccessMessage);
         driver.quit();
-
     }
 
     @Test
     public void addingDifferentBooksToShoppingCartTest() throws InterruptedException {
-        WebDriver driver = new ChromeDriver();
-        //Open Zip code page
-        driver.get("https://www.sharelane.com/cgi-bin/register.py");
-        //Input 5 digits zip;
-        driver.findElement(By.name("zip_code")).sendKeys("12345");
-        //Click the "Continue"
-        driver.findElement(By.cssSelector("[value=Continue]")).click();
-        //Input data into fields
-        driver.findElement(By.name("first_name")).sendKeys("Art");
-        driver.findElement(By.name("email")).sendKeys("adf@mail.ru");
-        driver.findElement(By.name("password1")).sendKeys("12345");
-        driver.findElement(By.name("password2")).sendKeys("12345");
-        driver.findElement(By.cssSelector("[value=Register]")).click();
-        String userEmail = driver.findElement(By.xpath("//td/b")).getText();
-        driver.findElement(By.xpath("//p/a")).click();
-        driver.findElement(By.name("email")).sendKeys(userEmail);
-        driver.findElement(By.name("password")).sendKeys("1111");
-        driver.findElement(By.xpath("//input[@type='submit' and @value='Login']")).click();
         Thread.sleep(3000);
         List<String> listOfAddingBookNames = new ArrayList<>();
         List<String> listOfBookNamesInShoppingCart = new ArrayList<>();
@@ -95,20 +79,18 @@ public class ShoppingCart {
                 listOfBookNamesInShoppingCart.add(booksInShoppingCart);
             }
         }
-        try {
-            int numberOfMatches = 0;
-            for (int k = 0; k <= listOfAddingBookNames.size(); k++) {
-                if (listOfBookNamesInShoppingCart.contains(listOfAddingBookNames.get(k))) {
-                    numberOfMatches++;
-                }
+        int numberOfMatches = 0;
+        for (String listOfAddingBookName : listOfAddingBookNames) {
+            if (listOfBookNamesInShoppingCart.contains(listOfAddingBookName)) {
+                numberOfMatches++;
             }
-            driver.quit();
-            boolean areListsTheSame = numberOfMatches == listOfAddingBookNames.size();
-            Assert.assertTrue(areListsTheSame, "All selected books haven't been added");
-        } catch (IndexOutOfBoundsException e) {
-            driver.quit();
-            boolean areListsTheSame = listOfBookNamesInShoppingCart.size() == listOfAddingBookNames.size();
-            Assert.assertFalse(areListsTheSame, "All selected books have been added");
         }
+        boolean areListsTheSame = numberOfMatches == listOfAddingBookNames.size();
+        Assert.assertTrue(areListsTheSame, "All selected books haven't been added");
+    }
+
+    @AfterMethod
+    public void afterMethod() {
+        driver.quit();
     }
 }
