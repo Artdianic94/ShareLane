@@ -1,14 +1,19 @@
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 public class SignUpTest {
+    @BeforeTest
+    public void setProp() {
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
+    }
 
     @Test
     public void sendFiveDigitsToZipCodeFieldTest() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
         WebDriver driver = new ChromeDriver();
         //Open Zip code page
         driver.get("https://www.sharelane.com/cgi-bin/register.py");
@@ -24,27 +29,21 @@ public class SignUpTest {
 
     @Test
     public void sendFourDigitsToZipCodeTest() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
         WebDriver driver = new ChromeDriver();
-        try {
-            //Open Zip code page
-            driver.get("https://www.sharelane.com/cgi-bin/register.py");
-            //Input 4 digits zip;
-            driver.findElement(By.name("zip_code")).sendKeys("12345");
-            //Click the "Continue"
-            driver.findElement(By.cssSelector("[value=Continue]")).click();
-        } catch (org.openqa.selenium.NoSuchElementException exception) {
-            //Check error message is shown
-            boolean isErrorMessageShown = driver.findElement(By.className("error_message")).isDisplayed();
-            driver.quit();
-            Assert.assertTrue(isErrorMessageShown, "Error message isn't shown");
-
-        }
+        //Open Zip code page
+        driver.get("https://www.sharelane.com/cgi-bin/register.py");
+        //Input 4 digits zip;
+        driver.findElement(By.name("zip_code")).sendKeys("1234");
+        //Click the "Continue"
+        driver.findElement(By.cssSelector("[value=Continue]")).click();
+        //Check error message is shown
+        boolean isErrorMessageShown = driver.findElement(By.className("error_message")).isDisplayed();
+        driver.quit();
+        Assert.assertTrue(isErrorMessageShown, "Error message isn't shown");
     }
 
     @Test
     public void sendSignUpFormTest() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
         WebDriver driver = new ChromeDriver();
         //Open Zip code page
         driver.get("https://www.sharelane.com/cgi-bin/register.py");
@@ -65,7 +64,6 @@ public class SignUpTest {
 
     @Test
     public void sendMoreThanFiveDigitsToZipCodeTest() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
         WebDriver driver = new ChromeDriver();
         try {
             //Open Zip code page
@@ -74,18 +72,18 @@ public class SignUpTest {
             driver.findElement(By.name("zip_code")).sendKeys("123456");
             //Click the "Continue"
             driver.findElement(By.cssSelector("[value=Continue]")).click();
-        } catch (org.openqa.selenium.NoSuchElementException exception) {
             //Check error message is shown
             boolean isErrorMessageShown = driver.findElement(By.className("error_message")).isDisplayed();
-            Assert.fail();
             driver.quit();
             Assert.assertTrue(isErrorMessageShown, "Error message isn't shown");
+        } catch (NoSuchElementException e) {
+            driver.quit();
+            Assert.fail("Error message isn't shown");
         }
     }
 
     @Test
-    public void sendRepeatedPassword() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
+    public void sendRepeatedPasswordTest() {
         WebDriver driver = new ChromeDriver();
         //Open Zip code page
         driver.get("https://www.sharelane.com/cgi-bin/register.py");
@@ -106,9 +104,9 @@ public class SignUpTest {
         driver.quit();
         Assert.assertTrue(isSuccessfulMessageShown, "Success message isn't shown");
     }
+
     @Test
-    public void sendFirstNameWithDifferentLetters() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
+    public void sendFirstNameWithDifferentLettersTest() {
         WebDriver driver = new ChromeDriver();
         //Open Zip code page
         driver.get("https://www.sharelane.com/cgi-bin/register.py");
@@ -129,9 +127,9 @@ public class SignUpTest {
         driver.quit();
         Assert.assertTrue(isSuccessfulMessageShown, "Error message isn't shown");
     }
+
     @Test
-    public void sendEmailWithInvalidCharacters() {
-        System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver");
+    public void sendEmailWithInvalidCharactersTest() {
         WebDriver driver = new ChromeDriver();
         //Open Zip code page
         driver.get("https://www.sharelane.com/cgi-bin/register.py");
