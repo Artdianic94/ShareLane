@@ -3,6 +3,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -79,20 +80,17 @@ public class ShoppingCart {
             }
         }
         int numberOfMatches = 0;
-        try {
-            for (int k = 0; k <= listOfAddingBookNames.size(); k++) {
-                if (listOfBookNamesInShoppingCart.contains(listOfAddingBookNames.get(k))) {
-                    numberOfMatches++;
-                }
+        for (String listOfAddingBookName : listOfAddingBookNames) {
+            if (listOfBookNamesInShoppingCart.contains(listOfAddingBookName)) {
+                numberOfMatches++;
             }
-            boolean areListsTheSame = numberOfMatches == listOfAddingBookNames.size();
-            Assert.assertTrue(areListsTheSame, "All selected books haven't been added");
-        } catch (IndexOutOfBoundsException e) {
-
-            boolean areListsTheSame = listOfBookNamesInShoppingCart.size() == listOfAddingBookNames.size();
-            Assert.assertFalse(areListsTheSame, "All selected books have been added");
-        } finally {
-            driver.quit();
         }
+        boolean areListsTheSame = numberOfMatches == listOfAddingBookNames.size();
+        Assert.assertTrue(areListsTheSame, "All selected books haven't been added");
+    }
+
+    @AfterMethod
+    public void afterMethod() {
+        driver.quit();
     }
 }
