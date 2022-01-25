@@ -48,7 +48,7 @@ public class ShoppingCart {
     }
 
     @Test
-    public void addingDifferentBooksToShoppingCartTest() throws InterruptedException {
+    public void addingDifferentBooksToShoppingCart() throws InterruptedException {
         WebDriver driver = new ChromeDriver();
         //Open Zip code page
         driver.get("https://www.sharelane.com/cgi-bin/register.py");
